@@ -21,20 +21,17 @@ async function loadCharacters(url) {
     charactersContainer.innerHTML = '';
     const response = await fetch(url);
     let characters = await response.json();
-    characters = characters.filter(c => c.image);
     characters.slice(0, 12).forEach(character => {
         const characterElement = document.createElement('a');
         characterElement.classList.add('character', character.house.toLowerCase());
-        characterElement.href = 'details.html';
+        characterElement.href = `details.html?id=${character.id}`;
 
         characterElement.innerHTML = `
-            <img src="${character.image}" alt="${character.name}" />
+            <img src="${character.image || './images/characters/troll.jpg'}" alt="${character.name}" />
             <p>${character.name}</p>`;
         charactersContainer.appendChild(characterElement);
     });
 }
-
-
 
 loadCharacters('https://hp-api.onrender.com/api/characters');
 
