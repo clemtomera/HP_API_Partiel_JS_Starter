@@ -3,24 +3,67 @@ const gryffindorBtn = document.querySelector('.house.gryffindor');
 const hufflepuffBtn = document.querySelector('.house.hufflepuff');
 const ravenclawBtn = document.querySelector('.house.ravenclaw');
 const slytherinBtn = document.querySelector('.house.slytherin');
+const sortSelect = document.getElementById('sort');
+
+var lastClicked = undefined;
 
 gryffindorBtn.addEventListener('click', () => {
-    loadCharacters('https://hp-api.onrender.com/api/characters/house/gryffindor');
+    lastClicked = 'gryffindor';
+    loadCharactersfromUrl();
 });
 hufflepuffBtn.addEventListener('click', () => {
-    loadCharacters('https://hp-api.onrender.com/api/characters/house/hufflepuff');
+    lastClicked = 'hufflepuff';
+    loadCharactersfromUrl();
 });
 ravenclawBtn.addEventListener('click', () => {
-    loadCharacters('https://hp-api.onrender.com/api/characters/house/ravenclaw');
+    lastClicked = 'ravenclaw';
+    loadCharactersfromUrl();
 }); 
 slytherinBtn.addEventListener('click', () => {
-    loadCharacters('https://hp-api.onrender.com/api/characters/house/slytherin');
+    lastClicked = 'slytherin';
+    loadCharactersfromUrl();
 });
 
-async function loadCharacters(url) {
+sortSelect.addEventListener('change', () => {
+    loadCharactersfromUrl();
+});
+
+async function loadCharactersfromUrl() {
     charactersContainer.innerHTML = '';
+    let url;
+
+    switch (lastClicked) {
+        case 'gryffindor':
+            url = 'https://hp-api.onrender.com/api/characters/house/gryffindor';
+            break;
+        case 'hufflepuff':
+            url = 'https://hp-api.onrender.com/api/characters/house/hufflepuff';
+            break;
+        case 'ravenclaw':
+            url = 'https://hp-api.onrender.com/api/characters/house/ravenclaw';
+            break;
+        case 'slytherin':
+            url = 'https://hp-api.onrender.com/api/characters/house/slytherin';
+            break;
+        default:
+            url = 'https://hp-api.onrender.com/api/characters';
+    }
+    
     const response = await fetch(url);
     let characters = await response.json();
+
+    const sortBy = sortSelect.value;
+    if (sortBy === 'name') {
+        characters.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === 'age') {
+        characters.sort((a, b) => a.age - b.age);
+    }
+
+    loadCharacters(characters);
+}
+
+function loadCharacters(characters) {
+    charactersContainer.innerHTML = '';
     characters.slice(0, 12).forEach(character => {
         const characterElement = document.createElement('a');
         characterElement.classList.add('character', character.house.toLowerCase());
@@ -33,6 +76,6 @@ async function loadCharacters(url) {
     });
 }
 
-loadCharacters('https://hp-api.onrender.com/api/characters');
+loadCharactersfromUrl('https://hp-api.onrender.com/api/characters');
 
 
