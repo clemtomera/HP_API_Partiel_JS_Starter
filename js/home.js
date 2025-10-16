@@ -53,10 +53,14 @@ async function loadCharactersfromUrl() {
     let characters = await response.json();
 
     const sortBy = sortSelect.value;
-    if (sortBy === 'name') {
+    if (sortBy === 'name (asc)') {
         characters.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy === 'age') {
-        characters.sort((a, b) => a.age - b.age);
+    } else if (sortBy === 'name (desc)') {
+        characters.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (sortBy === 'age (asc)') {
+        characters.sort((a, b) => b.yearOfBirth - a.yearOfBirth);
+    } else if (sortBy === 'age (desc)') {
+        characters.sort((a, b) => a.yearOfBirth - b.yearOfBirth);
     }
 
     loadCharacters(characters);
@@ -66,7 +70,10 @@ function loadCharacters(characters) {
     charactersContainer.innerHTML = '';
     characters.slice(0, 12).forEach(character => {
         const characterElement = document.createElement('a');
-        characterElement.classList.add('character', character.house.toLowerCase());
+        characterElement.classList.add('character');
+        if (character.house && character.house.trim() !== '') {
+            characterElement.classList.add(character.house.toLowerCase());
+        }
         characterElement.href = `details.html?id=${character.id}`;
 
         characterElement.innerHTML = `
